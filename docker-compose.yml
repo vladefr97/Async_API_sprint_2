@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  etl:
+    build: ./etl
+    container_name: etl
+    env_file:
+      - ./.env
+    depends_on:
+      - es_db
+      - db
+    command: ['python', 'main.py']
+    restart: always
+
+      
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - $HOME/postgresql/data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    expose:
+      - 5432
+    ports:
+      - '5432:5432'
+
+  nginx-fastapi:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-fastapi
+    ports:
+      - '80:80'
+    restart: always
+    depends_on:
+      - fastapi
+
+      
+  fastapi:
+    build: ./fastapi-solution
+    container_name: fastapi
+    env_file:
+      - ./.env
+    depends_on:
+      - es_db
+      - redis
+    expose:
+      - 8000
+    command: ['python', 'main.py']
+
+  es_db:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    container_name: elasticsearch
+    env_file:
+      - ./.env
+    environment:
+      - discovery.type=single-node
+    expose:
+      - 9200
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+
+  redis:
+    image: redis:7.0.3
+    container_name: redis
+    expose:
+      - 6379
+    volumes: 
+      - redis_data:/data
+
+volumes:
+  elastic_data:
+  redis_data:
