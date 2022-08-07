@@ -14,9 +14,9 @@ from models.mixins import ConfigMixin
 class FilmWork(BaseModel, ConfigMixin):
     id: uuid.UUID
     title: str
-    imdb_rating: float
+    imdb_rating: float = Field(le=10, ge=0)
     description: Optional[str]
-    creation_date: Optional[datetime]
+    # creation_date: Optional[datetime]
     actors: List[Actor] = []
     # TODO: нужно дополнить индекс movies, чтобы был List[Director], но по заданию в индексе массив строк
     directors: List[str] = Field(alias="director")
