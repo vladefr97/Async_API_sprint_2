@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from dataclasses import dataclass
 
@@ -10,6 +10,8 @@ from tests.factories.films import FilmFactory
 from tests.functional.api.settings import ES_HOST, MOVIES_INDEX_NAME
 from tests.functional.api.utils import check_es_indexes_exists, load_fake_films
 
+from models.entities.movie import Movie
+
 
 @dataclass
 class HTTPResponse:
@@ -18,7 +20,7 @@ class HTTPResponse:
     status: int
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 async def es_client():
     client = AsyncElasticsearch(hosts=ES_HOST)
     check_es_indexes_exists(client)
@@ -26,14 +28,14 @@ async def es_client():
     await client.close()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 async def session():
     session = aiohttp.ClientSession()
     yield session
     await session.close()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def make_get_request(session):
     async def inner(url: str, params: Optional[dict] = None) -> HTTPResponse:
         params = params or {}
@@ -48,10 +50,15 @@ def make_get_request(session):
     return inner
 
 
-@pytest.fixture(scope="session")
-async def fake_films(es_client):
+@pytest.fixture(scope="function")
+async def fake_films(es_client) -> List[Movie]:
     films = [FilmFactory.build() for i in range(10)]
     response = await load_fake_films(es_client, films)
     if response["errors"]:
         raise ConnectionError(f"Errors occurred during uploading fake films to ES index '{MOVIES_INDEX_NAME}'")
     return films
+
+
+@pytest.fixture(scope="function")
+async def fake_film(fake_films: List[Movie]) -> Movie:
+    return fake_films[0]

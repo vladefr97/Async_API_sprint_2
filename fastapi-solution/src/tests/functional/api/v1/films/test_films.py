@@ -1,5 +1,7 @@
 from typing import List
 
+from http import HTTPStatus
+
 import pytest
 from tests.functional.api.settings import FILMS_V1_URL
 
@@ -22,11 +24,4 @@ from models.entities.movie import Movie
 
 
 class TestFilms:
-    @pytest.mark.asyncio
-    async def test_search_detailed(self, es_client, make_get_request, fake_films: List[Movie]):
-
-        # Выполнение запроса
-        response = await make_get_request(FILMS_V1_URL, {"filter[imdb_rating_lt]": 8, "filter[imdb_rating_gt]": 7})
-
-        # Проверка результата
-        assert response.status == 200
+    ...
