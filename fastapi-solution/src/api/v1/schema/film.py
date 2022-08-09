@@ -20,6 +20,6 @@ class FilmSchema(BaseModel):
     creation_date: Optional[datetime]
     # TODO: уточнять поля словаря или поменять на nested модели
     actors: List[NestedPersonSchema] = []
-    director: List[NestedPersonSchema] = []
+    directors: List[str] = []
     writers: List[NestedPersonSchema] = []
     genres: List[str]

@@ -6,7 +6,7 @@ import aiohttp
 import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
-from tests.factories.films import FilmFactory
+from tests.factories.films import FilmFactory, get_pretty_fake_films, get_fake_elastic_films
 from tests.functional.api.settings import ES_HOST, MOVIES_INDEX_NAME
 from tests.functional.api.utils import check_es_indexes_exists, load_fake_films
 
@@ -49,11 +49,13 @@ def make_get_request(session):
 
     return inner
 
-
+# TODO: вызывается перед каждой функцией - пофиксить
 @pytest.fixture(scope="function")
 async def fake_films(es_client) -> List[Movie]:
-    films = [FilmFactory.build() for i in range(10)]
-    response = await load_fake_films(es_client, films)
+    films = FilmFactory.batch(10)
+    pretty_films = get_pretty_fake_films(films)
+    pretty_elastic_films = get_fake_elastic_films(pretty_films)
+    response = await load_fake_films(es_client, pretty_elastic_films)
     if response["errors"]:
         raise ConnectionError(f"Errors occurred during uploading fake films to ES index '{MOVIES_INDEX_NAME}'")
     return films
