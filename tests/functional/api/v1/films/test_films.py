@@ -1,9 +1,9 @@
 from http import HTTPStatus
 
 import pytest
-from tests.functional.api.settings import FILMS_V1_URL
 
 from models.entities.movie import Movie
+from tests.functional.api.settings import FILMS_V1_URL
 from tests.functional.api.types import AsyncGET
 
 

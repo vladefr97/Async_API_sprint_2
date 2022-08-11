@@ -1,10 +1,11 @@
 from typing import List
 
 from elasticsearch import AsyncElasticsearch
-from tests.factories.films import ElasticFakeFilm
-from tests.functional.api.settings import MOVIES_INDEX_NAME
 
 from models.entities.movie import Movie
+from tests.factories.films import ElasticFakeFilm
+from tests.factories.genres import ElasticFakeGenre
+from tests.functional.api.settings import GENRES_INDEX_NAME, MOVIES_INDEX_NAME
 
 
 def check_es_indexes_exists(client: AsyncElasticsearch):
@@ -21,3 +22,15 @@ async def load_fake_films(es_client: AsyncElasticsearch, fake_films: List[Elasti
     return await es_client.bulk(
         body=request_body,
     )
+
+
+async def load_fake_genres(es_client: AsyncElasticsearch, fake_genres: List[ElasticFakeGenre]):
+    request_body = []
+    for genre in fake_genres:
+        request_body.append({"index": {"_index": GENRES_INDEX_NAME, "_id": genre.id}})
+        request_body.append(genre.dict(by_alias=True))
+
+    response = await es_client.bulk(
+        body=request_body,
+    )
+    return response
