@@ -1,16 +1,15 @@
 # Film
 # Получение фильма по правильному id
 # Получение фильма по неправильному id
-from typing import Awaitable, Callable, Dict, Union
+from typing import Awaitable, Callable, Dict, List, Union
 
 from http import HTTPStatus
 
 import pytest
+from pydantic import parse_obj_as
 from tests.functional.api.settings import FILMS_V1_URL
 
 from models.entities.movie import Movie
-from pydantic import parse_obj_as
-from typing import List
 
 # TODO: виды тестов
 # Films
@@ -26,7 +25,6 @@ AsyncGET = Callable[[str, Dict[str, Union[str, float]]], Awaitable]
 
 
 class TestFilms:
-
     @pytest.mark.asyncio
     async def test_films_response_size(self, make_get_request: AsyncGET):
         RESPONSE_SIZE = 5
@@ -66,8 +64,6 @@ class TestFilms:
         query_param = {"filter[in_writers]": fake_actor_name}
         response = await make_get_request(FILMS_V1_URL, query_param)
         assert response.status == HTTPStatus.NOT_FOUND
-
-
 
     @pytest.mark.asyncio
     async def test_films_search_by_writer_name(self, make_get_request: AsyncGET, fake_film: Movie):

@@ -6,7 +6,7 @@ import aiohttp
 import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
-from tests.factories.films import FilmFactory, get_pretty_fake_films, get_fake_elastic_films
+from tests.factories.films import FilmFactory, get_fake_elastic_films, get_pretty_fake_films
 from tests.functional.api.settings import ES_HOST, MOVIES_INDEX_NAME
 from tests.functional.api.utils import check_es_indexes_exists, load_fake_films
 
@@ -48,6 +48,7 @@ def make_get_request(session):
             )
 
     return inner
+
 
 # TODO: вызывается перед каждой функцией - пофиксить
 @pytest.fixture(scope="function")

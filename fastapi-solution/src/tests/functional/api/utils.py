@@ -1,10 +1,10 @@
 from typing import List
 
 from elasticsearch import AsyncElasticsearch
+from tests.factories.films import ElasticFakeFilm
 from tests.functional.api.settings import MOVIES_INDEX_NAME
 
 from models.entities.movie import Movie
-from tests.factories.films import ElasticFakeFilm
 
 
 def check_es_indexes_exists(client: AsyncElasticsearch):

@@ -1,10 +1,11 @@
+from typing import List, Optional
+
+from faker import Faker
 from pydantic_factories import ModelFactory
 
-from models.entities.movie import Movie
 from models.entities.actor import Actor
+from models.entities.movie import Movie
 from models.entities.writer import Writer
-from typing import List, Optional
-from faker import Faker
 
 fake = Faker()
 
