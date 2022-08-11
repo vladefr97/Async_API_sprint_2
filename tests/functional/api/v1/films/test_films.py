@@ -1,27 +1,10 @@
-# Film
-# Получение фильма по правильному id
-# Получение фильма по неправильному id
-from typing import Awaitable, Callable, Dict, List, Union
-
 from http import HTTPStatus
 
 import pytest
-from pydantic import parse_obj_as
 from tests.functional.api.settings import FILMS_V1_URL
 
 from models.entities.movie import Movie
-
-# TODO: виды тестов
-# Films
-# Получение фильма по id
-# Фильтрация с неправильно заданным рейтингом (больше максимально возможного, меньше минимального, строка)
-# Фильтрация по жанру фильма (должен быть как минимум один)
-# Фильтрация по актерам фильма (должен быть как минимум один)
-# Фильтрация по режиссерам фильма (должен быть как минимум один)
-# Фильтрация по сценаристам фильма (должен быть как минимум один)
-# Фильтрация страницы и размера (при размере 5, должно быть как минимум две страницы)
-# Проверка сортировки
-AsyncGET = Callable[[str, Dict[str, Union[str, float]]], Awaitable]
+from tests.functional.api.types import AsyncGET
 
 
 class TestFilms:
