@@ -7,8 +7,9 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
 from tests.factories.films import FilmFactory, get_fake_elastic_films, get_pretty_fake_films
+from tests.factories.genres import GenreFactory, FakeGenre, make_pretty_fake_genres
 from tests.functional.api.settings import ES_HOST, MOVIES_INDEX_NAME
-from tests.functional.api.utils import check_es_indexes_exists, load_fake_films
+from tests.functional.api.utils import check_es_indexes_exists, load_fake_films, load_fake_genres
 
 from models.entities.movie import Movie
 
@@ -59,9 +60,24 @@ async def fake_films(es_client) -> List[Movie]:
     response = await load_fake_films(es_client, pretty_elastic_films)
     if response["errors"]:
         raise ConnectionError(f"Errors occurred during uploading fake films to ES index '{MOVIES_INDEX_NAME}'")
-    return films
+    return pretty_films
+
+
+@pytest.fixture(scope="function")
+async def fake_genres(es_client) -> List[FakeGenre]:
+    genres = GenreFactory.batch(10)
+    pretty_genres = make_pretty_fake_genres(genres)
+    response = await load_fake_genres(es_client, pretty_genres)
+    if response["errors"]:
+        raise ConnectionError(f"Errors occurred during uploading fake genres to ES index '{MOVIES_INDEX_NAME}'")
+    return pretty_genres
 
 
 @pytest.fixture(scope="function")
 async def fake_film(fake_films: List[Movie]) -> Movie:
     return fake_films[0]
+
+
+@pytest.fixture(scope="function")
+async def fake_genre(fake_genres: List[FakeGenre]) -> FakeGenre:
+    return fake_genres[0]
