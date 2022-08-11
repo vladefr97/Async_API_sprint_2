@@ -1,3 +1,4 @@
+import asyncio
 from typing import List, Optional
 
 from dataclasses import dataclass
@@ -21,22 +22,27 @@ class HTTPResponse:
     status: int
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
+def event_loop():
+    yield asyncio.get_event_loop()
+
+
+@pytest.fixture(scope="session")
 async def es_client():
     client = AsyncElasticsearch(hosts=ES_HOST)
-    check_es_indexes_exists(client)
+    # check_es_indexes_exists(client)
     yield client
     await client.close()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def session():
     session = aiohttp.ClientSession()
     yield session
     await session.close()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def make_get_request(session):
     async def inner(url: str, params: Optional[dict] = None) -> HTTPResponse:
         params = params or {}
@@ -51,8 +57,7 @@ def make_get_request(session):
     return inner
 
 
-# TODO: вызывается перед каждой функцией - пофиксить
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def fake_films(es_client) -> List[Movie]:
     films = FilmFactory.batch(10)
     pretty_films = get_pretty_fake_films(films)
@@ -63,7 +68,7 @@ async def fake_films(es_client) -> List[Movie]:
     return pretty_films
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def fake_genres(es_client) -> List[FakeGenre]:
     genres = GenreFactory.batch(10)
     pretty_genres = make_pretty_fake_genres(genres)
@@ -73,11 +78,11 @@ async def fake_genres(es_client) -> List[FakeGenre]:
     return pretty_genres
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def fake_film(fake_films: List[Movie]) -> Movie:
     return fake_films[0]
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def fake_genre(fake_genres: List[FakeGenre]) -> FakeGenre:
     return fake_genres[0]

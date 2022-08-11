@@ -30,6 +30,7 @@ async def load_fake_genres(es_client: AsyncElasticsearch, fake_genres: List[Elas
         request_body.append({"index": {"_index": GENRES_INDEX_NAME, "_id": genre.id}})
         request_body.append(genre.dict(by_alias=True))
 
-    return await es_client.bulk(
+    response = await es_client.bulk(
         body=request_body,
     )
+    return response
