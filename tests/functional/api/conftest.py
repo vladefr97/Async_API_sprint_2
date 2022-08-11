@@ -1,18 +1,17 @@
-import asyncio
 from typing import List, Optional
 
+import asyncio
 from dataclasses import dataclass
 
 import aiohttp
 import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
-from tests.factories.films import FilmFactory, get_fake_elastic_films, get_pretty_fake_films
-from tests.factories.genres import GenreFactory, FakeGenre, make_pretty_fake_genres
-from tests.functional.api.settings import ES_HOST, MOVIES_INDEX_NAME
-from tests.functional.api.utils import check_es_indexes_exists, load_fake_films, load_fake_genres
 
-from models.entities.movie import Movie
+from tests.factories.films import FakeFilm, FilmFactory, get_fake_elastic_films, get_pretty_fake_films
+from tests.factories.genres import FakeGenre, GenreFactory, make_pretty_fake_genres
+from tests.functional.api.settings import ES_HOST, MOVIES_INDEX_NAME
+from tests.functional.api.utils import load_fake_films, load_fake_genres
 
 
 @dataclass
@@ -58,7 +57,7 @@ def make_get_request(session):
 
 
 @pytest.fixture(scope="session")
-async def fake_films(es_client) -> List[Movie]:
+async def fake_films(es_client) -> List[FakeFilm]:
     films = FilmFactory.batch(10)
     pretty_films = get_pretty_fake_films(films)
     pretty_elastic_films = get_fake_elastic_films(pretty_films)
@@ -79,7 +78,7 @@ async def fake_genres(es_client) -> List[FakeGenre]:
 
 
 @pytest.fixture(scope="session")
-async def fake_film(fake_films: List[Movie]) -> Movie:
+async def fake_film(fake_films: List[FakeFilm]) -> FakeFilm:
     return fake_films[0]
 
 

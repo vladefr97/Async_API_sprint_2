@@ -14,7 +14,7 @@ class FakeFilm(Movie):
     pass
 
 
-class ElasticFakeFilm(Movie):
+class ElasticFakeFilm(FakeFilm):
     actors_names: Optional[List[str]]
     writers_names: Optional[List[str]]
 
@@ -24,7 +24,7 @@ class FilmFactory(ModelFactory):
     __model__ = FakeFilm
 
 
-def get_pretty_fake_films(fake_films: List[Movie]):
+def get_pretty_fake_films(fake_films: List[FakeFilm]):
     for film in fake_films:
         film.title = fake.word()
         film.actors = list(map(lambda a: Actor(id=a.id, name=fake.name()), film.actors))
