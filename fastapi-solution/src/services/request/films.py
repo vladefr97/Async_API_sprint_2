@@ -14,6 +14,7 @@ from services.request_service import RequestManyService
 
 # TODO: определиться с названием film/movie везде по разному
 class FilmsRequestService(RequestManyService):
+    # TODO: вынести название индекса в глодальные настройки приложения
     elastic_index = "movies"
 
     async def get_films_from_elastic(self, edsl_query: Optional[dict] = None) -> Optional[List[Movie]]:

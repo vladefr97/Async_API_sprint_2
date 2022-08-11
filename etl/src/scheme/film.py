@@ -20,20 +20,17 @@ class Movie(BaseModel):
     actors: Optional[List[PersonData]]
     writers: Optional[List[PersonData]]
 
+    def _get_value_or_empty(cls, value, default_value):
+        return value if value else default_value
+
     @validator("imdb_rating")
     def _set_float(cls, value) -> float:
-        if value is None:
-            value = float(0)
-        return value
+        return cls._get_value_or_empty(value, float(0))
 
     @validator("description")
     def _set_str(cls, value) -> str:
-        if value is None:
-            value = ""
-        return value
+        return cls._get_value_or_empty(value, "")
 
     @validator("genre", "director", "actors_names", "writers_names", "actors", "writers")
     def _set_list(cls, value) -> List:
-        if value is None:
-            value = []
-        return value
+        return cls._get_value_or_empty(value, [])
