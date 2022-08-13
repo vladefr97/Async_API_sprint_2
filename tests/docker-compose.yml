@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  nginx-fastapi:
+    build:
+      context: ../nginx
+      dockerfile: Dockerfile-fastapi
+    ports:
+      - '80:80'
+    restart: always
+    depends_on:
+      - fastapi
+
+      
+  fastapi:
+    build: ../fastapi-solution
+    container_name: fastapi
+    env_file:
+      - ../.env
+    depends_on:
+      - es_db
+      - redis
+    expose:
+      - 8000
+    command: ['python', 'main.py']
+
+  es_db:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    container_name: elasticsearch
+    env_file:
+      - ../.env
+    environment:
+      - discovery.type=single-node
+    expose:
+      - 9200
+    ports:
+      - '9200:9200'
+
+
+  redis:
+    image: redis:7.0.3
+    container_name: redis
+    expose:
+      - 6379
+    ports:
+      - '6379:6379'
+
+      
+  test_func:
+    build:
+      context: ./
+      dockerfile: Dockerfile-func
+    container_name: test_func    
+    depends_on:
+      - redis
+      - es_db
+      - fastapi
+      - nginx-fastapi
+    restart: always
+
+
