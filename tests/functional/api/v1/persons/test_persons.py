@@ -5,8 +5,9 @@ from functional.api.settings import PERSONS_V1_URL
 from functional.api.types import AsyncGET
 
 
+@pytest.mark.asyncio
 class TestPersons:
-    @pytest.mark.asyncio
+
     async def test_persons_response_size(self, make_get_request: AsyncGET):
         RESPONSE_SIZE = 5
         query_param = {"filter[size]": RESPONSE_SIZE}

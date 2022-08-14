@@ -6,8 +6,9 @@ from functional.api.types import AsyncGET
 from functional.models.entities.movie import Movie
 
 
+@pytest.mark.asyncio
 class TestFilms:
-    @pytest.mark.asyncio
+
     async def test_films_response_size(self, make_get_request: AsyncGET):
         RESPONSE_SIZE = 5
         query_param = {"filter[size]": RESPONSE_SIZE}
@@ -15,12 +16,10 @@ class TestFilms:
         assert response.status == HTTPStatus.OK
         assert len(response.body) == RESPONSE_SIZE
 
-    @pytest.mark.asyncio
     async def test_films_search_with_desc_sorting(self, make_get_request: AsyncGET):
         first_film, second_film, third_film = await self.__get_three_sorted_films(make_get_request, "-imdb_rating")
         assert first_film.imdb_rating > second_film.imdb_rating > third_film.imdb_rating
 
-    @pytest.mark.asyncio
     async def test_films_search_with_asc_sorting(self, make_get_request: AsyncGET):
         first_film, second_film, third_film = await self.__get_three_sorted_films(make_get_request, "imdb_rating")
         assert first_film.imdb_rating < second_film.imdb_rating < third_film.imdb_rating
@@ -34,7 +33,6 @@ class TestFilms:
         third_film = Movie(**response.body[2])
         return first_film, second_film, third_film
 
-    @pytest.mark.asyncio
     async def test_films_search_by_actor_name(self, make_get_request: AsyncGET, fake_film: Movie):
         fake_actor_name = fake_film.actors[0].name
         query_param = {"filter[in_actors]": fake_actor_name}
@@ -47,7 +45,6 @@ class TestFilms:
         response = await make_get_request(FILMS_V1_URL, query_param)
         assert response.status == HTTPStatus.NOT_FOUND
 
-    @pytest.mark.asyncio
     async def test_films_search_by_writer_name(self, make_get_request: AsyncGET, fake_film: Movie):
         fake_writer_name = fake_film.writers[0].name
         query_param = {"filter[in_writers]": fake_writer_name}
@@ -60,7 +57,6 @@ class TestFilms:
         response = await make_get_request(FILMS_V1_URL, query_param)
         assert response.status == HTTPStatus.NOT_FOUND
 
-    @pytest.mark.asyncio
     async def test_films_search_by_director_name(self, make_get_request: AsyncGET, fake_film: Movie):
         fake_director_name = fake_film.directors[0]
         query_param = {"filter[in_directors]": fake_director_name}

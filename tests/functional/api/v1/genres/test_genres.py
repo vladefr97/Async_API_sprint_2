@@ -5,8 +5,9 @@ from functional.api.settings import GENRES_V1_URL
 from functional.api.types import AsyncGET
 
 
+@pytest.mark.asyncio
 class TestGenres:
-    @pytest.mark.asyncio
+
     async def test_genres_response_size(self, make_get_request: AsyncGET):
         RESPONSE_SIZE = 5
         query_param = {"filter[size]": RESPONSE_SIZE}
