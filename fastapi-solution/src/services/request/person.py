@@ -2,13 +2,13 @@ from typing import Optional
 
 from functools import lru_cache
 
-from aioredis import Redis
-from elasticsearch import AsyncElasticsearch
 from fastapi import Depends
 
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.entities.film_person import FilmPerson
+from services.dependence.cache import AsyncCacheStorage
+from services.dependence.search import AsyncSearchStorage
 from services.request_service import RequestSingleService
 
 PERSON_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
@@ -20,15 +20,15 @@ class PersonService(RequestSingleService):
     async def get_by_id(self, person_id: str) -> Optional[FilmPerson]:
         person = await self._person_from_cache(person_id)
         if not person:
-            person = await self._get_person_from_elastic(person_id)
+            person = await self._get_person_from_search(person_id)
             if not person:
                 return None
             await self._put_person_to_cache(person)
 
         return person
 
-    async def _get_person_from_elastic(self, person_id: str) -> Optional[FilmPerson]:
-        return await self._get_from_elastic(person_id, FilmPerson)
+    async def _get_person_from_search(self, person_id: str) -> Optional[FilmPerson]:
+        return await self._get_from_search(person_id, FilmPerson)
 
     async def _person_from_cache(self, person_id: str) -> Optional[FilmPerson]:
         key = "person" + ":" + str(person_id)
@@ -41,7 +41,7 @@ class PersonService(RequestSingleService):
 
 @lru_cache()
 def get_person_service(
-    redis: Redis = Depends(get_redis),
-    elastic: AsyncElasticsearch = Depends(get_elastic),
+        cache: AsyncCacheStorage = Depends(get_redis),
+        search: AsyncSearchStorage = Depends(get_elastic),
 ) -> PersonService:
-    return PersonService(redis, elastic)
+    return PersonService(cache, search)

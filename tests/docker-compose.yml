@@ -58,5 +58,6 @@ services:
       - fastapi
       - nginx-fastapi
     restart: always
+    command: ['pytest', 'tests']
 
 

@@ -1,14 +1,13 @@
 from typing import Optional
 
 from functools import lru_cache
-
-from aioredis import Redis
-from elasticsearch import AsyncElasticsearch
 from fastapi import Depends
 
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.entities.movie import Movie
+from services.dependence.cache import AsyncCacheStorage
+from services.dependence.search import AsyncSearchStorage
 from services.request_service import RequestSingleService
 
 FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
@@ -24,7 +23,7 @@ class FilmService(RequestSingleService):
         film = await self._film_from_cache(film_id)
         if not film:
             # Если фильма нет в кеше, то ищем его в Elasticsearch
-            film = await self._get_film_from_elastic(film_id)
+            film = await self._get_film_from_search(film_id)
             if not film:
                 # Если он отсутствует в Elasticsearch, значит, фильма вообще нет в базе
                 return None
@@ -33,8 +32,8 @@ class FilmService(RequestSingleService):
 
         return film
 
-    async def _get_film_from_elastic(self, film_id: str) -> Optional[Movie]:
-        return await self._get_from_elastic(film_id, Movie)
+    async def _get_film_from_search(self, film_id: str) -> Optional[Movie]:
+        return await self._get_from_search(film_id, Movie)
 
     async def _film_from_cache(self, film_id: str) -> Optional[Movie]:
         key = "film" + ":" + str(film_id)
@@ -47,7 +46,7 @@ class FilmService(RequestSingleService):
 
 @lru_cache()
 def get_film_service(
-    redis: Redis = Depends(get_redis),
-    elastic: AsyncElasticsearch = Depends(get_elastic),
+        cache: AsyncCacheStorage = Depends(get_redis),
+        search: AsyncSearchStorage = Depends(get_elastic),
 ) -> FilmService:
-    return FilmService(redis, elastic)
+    return FilmService(cache, search)

@@ -61,7 +61,7 @@ async def films_list(  # pylint: disable=too-many-arguments
     adapter: FilmsAPI2EDSLQueryAdapter = Depends(get_api_to_edsl_adapter),
 ) -> List[FilmSchema]:
     dsl = adapter.get_edsl_from_api(filters, sort_options)
-    films = await films_service.get_films_from_elastic(edsl_query=dsl)
+    films = await films_service.get_films(edsl_query=dsl)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=FILMS_NOT_FOUND_MSG)
     return [to_film_api_schema(film) for film in films]
