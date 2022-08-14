@@ -8,6 +8,7 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
 
+
 from factories.films import FakeFilm, FilmFactory, get_fake_elastic_films, get_pretty_fake_films
 from factories.genres import FakeGenre, GenreFactory, make_pretty_fake_genres
 from api.settings import ES_HOST, MOVIES_INDEX_NAME

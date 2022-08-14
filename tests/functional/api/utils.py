@@ -8,6 +8,7 @@ from factories.genres import ElasticFakeGenre
 from api.settings import GENRES_INDEX_NAME, MOVIES_INDEX_NAME
 
 
+
 def check_es_indexes_exists(client: AsyncElasticsearch):
     if not client.indices.exists(index=MOVIES_INDEX_NAME):
         raise ConnectionError(f"Elasticsearch index '{MOVIES_INDEX_NAME}' does not exists!")
