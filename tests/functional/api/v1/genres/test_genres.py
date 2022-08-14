@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 import pytest
-
 from functional.api.settings import GENRES_V1_URL
 from functional.api.types import AsyncGET
 

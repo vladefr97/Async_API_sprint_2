@@ -6,13 +6,12 @@ from dataclasses import dataclass
 import aiohttp
 import pytest
 from elasticsearch import AsyncElasticsearch
-from multidict import CIMultiDictProxy
-
+from functional.api.settings import ES_HOST, MOVIES_INDEX_NAME, PERSON_INDEX_NAME
+from functional.api.utils import check_es_indexes_exists, load_fake_films, load_fake_genres, load_fake_persons
 from functional.factories.films import FakeFilm, FilmFactory, get_fake_elastic_films, get_pretty_fake_films
 from functional.factories.genres import FakeGenre, GenreFactory, make_pretty_fake_genres
-from functional.api.settings import ES_HOST, MOVIES_INDEX_NAME, PERSON_INDEX_NAME
-from functional.api.utils import load_fake_films, load_fake_genres, check_es_indexes_exists, load_fake_persons
-from functional.factories.persons import PersonFactory, make_pretty_fake_persons, FakePerson
+from functional.factories.persons import FakePerson, PersonFactory, make_pretty_fake_persons
+from multidict import CIMultiDictProxy
 
 
 @dataclass

@@ -1,7 +1,6 @@
 from typing import List
 
 from elasticsearch import AsyncElasticsearch
-
 from functional.api.settings import GENRES_INDEX_NAME, MOVIES_INDEX_NAME, PERSON_INDEX_NAME
 from functional.factories.films import ElasticFakeFilm
 from functional.factories.genres import ElasticFakeGenre

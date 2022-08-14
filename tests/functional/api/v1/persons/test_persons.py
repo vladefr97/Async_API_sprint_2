@@ -1,10 +1,7 @@
 from http import HTTPStatus
 
 import pytest
-
-from functional.factories.persons import FakePerson
-from functional.models.entities.movie import Movie
-from functional.api.settings import FILMS_V1_URL, PERSONS_V1_URL
+from functional.api.settings import PERSONS_V1_URL
 from functional.api.types import AsyncGET
 
 

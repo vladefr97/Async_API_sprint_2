@@ -3,10 +3,9 @@ from typing import List
 from http import HTTPStatus
 
 import pytest
-
-from functional.factories.genres import FakeGenre
 from functional.api.settings import GENRES_V1_URL
 from functional.api.types import AsyncGET
+from functional.factories.genres import FakeGenre
 
 
 class TestGenre:

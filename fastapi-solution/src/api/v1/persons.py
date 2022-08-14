@@ -5,7 +5,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from api.v1.filters import PersonsAPIQueryFilters
-from api.v1.messages.eng import PERSON_NOT_FOUND_MSG, PERSONS_NOT_FOUND_MSG
+from api.v1.messages.eng import PERSON_NOT_FOUND_MSG
 from api.v1.schema import PersonSchema
 from models.entities.film_person import FilmPerson
 from services.adapter.v1.persons import PersonsAPI2EDSLQueryAdapter, get_api_to_edsl_adapter
