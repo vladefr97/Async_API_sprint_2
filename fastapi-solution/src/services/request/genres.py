@@ -16,14 +16,12 @@ class GenresRequestService(RequestManyService):
     index_name = "genre"
 
     async def get_genres(self, edsl_query: Optional[dict] = None) -> Optional[List[Genre]]:
-        return self._hits_to_model_list(
-            List[Genre], await self.search.search(index=self.index_name, body=edsl_query)
-        )
+        return self._hits_to_model_list(List[Genre], await self.search.search(index=self.index_name, body=edsl_query))
 
 
 @lru_cache()
 def get_genres_service(
-        cache: AsyncCacheStorage = Depends(get_redis),
-        search: AsyncSearchStorage = Depends(get_elastic),
+    cache: AsyncCacheStorage = Depends(get_redis),
+    search: AsyncSearchStorage = Depends(get_elastic),
 ) -> GenresRequestService:
     return GenresRequestService(cache, search)

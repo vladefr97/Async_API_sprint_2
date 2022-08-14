@@ -3,7 +3,9 @@ from typing import List
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
 
+from api.pagination import ApiPaginator, get_paginator
 from api.v1.filters import FilmsAPIQueryFilters
 from api.v1.messages.eng import FILM_NOT_FOUND_MSG, FILMS_NOT_FOUND_MSG
 from api.v1.schema import FilmSchema
@@ -17,7 +19,6 @@ router = APIRouter()
 
 
 # TODO: поискать решение, чтобы можно было указывать параметры не в функции, а в отдельной модели
-# TODO: уточнить как правильно называть переменные по json api
 def get_query_filters(
     imdb_rating_lt: float = Query(default=None, le=10, ge=0, alias="filter[imdb_rating_lt]"),
     imdb_rating_gt: float = Query(default=None, le=10, ge=0, alias="filter[imdb_rating_gt]"),
@@ -25,9 +26,6 @@ def get_query_filters(
     in_actors: List[str] = Query(default=[], alias="filter[in_actors]"),
     in_writers: List[str] = Query(default=[], alias="filter[in_writers]"),
     in_directors: List[str] = Query(default=[], alias="filter[in_directors]"),
-    page: int = Query(default=1, alias="filter[page]", ge=1),
-    size: int = Query(default=10, alias="filter[size]", ge=1)
-    # pylint: disable=too-many-arguments
 ) -> FilmsAPIQueryFilters:
     try:
         return FilmsAPIQueryFilters(
@@ -37,8 +35,6 @@ def get_query_filters(
             in_actors=in_actors,
             in_writers=in_writers,
             in_directors=in_directors,
-            page=page,
-            size=size,
         )
     except ValueError as err:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(err)) from err
@@ -57,10 +53,12 @@ def to_film_api_schema(movie: Movie) -> FilmSchema:
 async def films_list(  # pylint: disable=too-many-arguments
     films_service: FilmsRequestService = Depends(get_films_service),
     filters: FilmsAPIQueryFilters = Depends(get_query_filters),
+    paginator: ApiPaginator = Depends(get_paginator),
     sort_options: List[FilmsApiSortOption] = Query(default=[], alias="sort"),
     adapter: FilmsAPI2EDSLQueryAdapter = Depends(get_api_to_edsl_adapter),
 ) -> List[FilmSchema]:
-    dsl = adapter.get_edsl_from_api(filters, sort_options)
+    print(paginator)
+    dsl = adapter.get_edsl_from_api(filters, sort_options, paginator)
     films = await films_service.get_films(edsl_query=dsl)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=FILMS_NOT_FOUND_MSG)

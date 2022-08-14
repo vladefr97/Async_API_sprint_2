@@ -1,12 +1,15 @@
 # TODO: файл не должен лежать на одном уровне с film и person
 from typing import Any, Dict, List, Optional, Type
+
 from pydantic import BaseModel, parse_obj_as
 
+from core.config import CacheSettings
 from services.dependence.cache import AsyncCacheStorage
 from services.dependence.search import AsyncSearchStorage
-from core.config import CacheSettings
 
 cache_settings = CacheSettings()
+
+
 class RequestService:
     index_name = ""
     expire = cache_settings.expire_in_seconds
@@ -34,8 +37,9 @@ class RequestSingleService(RequestService):
 
 
 class RequestManyService(RequestService):
-    def _hits_to_model_list(self, list_model: Type[List[BaseModel]], es_docs: Dict[str, Any]) -> Optional[
-        List[BaseModel]]:
+    def _hits_to_model_list(
+        self, list_model: Type[List[BaseModel]], es_docs: Dict[str, Any]
+    ) -> Optional[List[BaseModel]]:
         try:
             values_dict = [item["_source"] for item in es_docs["hits"]["hits"]]
             objs = parse_obj_as(list_model, values_dict)

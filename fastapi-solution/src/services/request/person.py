@@ -15,7 +15,7 @@ from services.request_service import RequestSingleService
 class PersonService(RequestSingleService):
     index_name = "person"
 
-    def __init__(self, cache: AsyncCacheStorage, search: AsyncSearchStorage, expire: Optional[int], ):
+    def __init__(self, cache: AsyncCacheStorage, search: AsyncSearchStorage, expire: Optional[int] = None):
         super().__init__(cache, search)
         if expire:
             self.expire = expire
@@ -44,7 +44,7 @@ class PersonService(RequestSingleService):
 
 @lru_cache()
 def get_person_service(
-        cache: AsyncCacheStorage = Depends(get_redis),
-        search: AsyncSearchStorage = Depends(get_elastic),
+    cache: AsyncCacheStorage = Depends(get_redis),
+    search: AsyncSearchStorage = Depends(get_elastic),
 ) -> PersonService:
     return PersonService(cache, search)

@@ -1,10 +1,11 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from enum import Enum
 from functools import lru_cache
 
 from pydantic import BaseModel
 
+from api.pagination import ApiPaginator
 from api.v1.filters.films import FilmsAPIQueryFilters
 from api.v1.sorting.films import FilmsApiSortOption
 from services.adapter.api_to_edsl import API2EDSLQueryAdapter
@@ -35,13 +36,15 @@ class FilmsAPI2EDSLQueryAdapter(API2EDSLQueryAdapter):
         )
         self.__refresh_edsl_query()
 
-    def get_edsl_from_api(self, query_filters: FilmsAPIQueryFilters, sort_options: List[FilmsApiSortOption]) -> dict:
+    def get_edsl_from_api(
+        self, query_filters: FilmsAPIQueryFilters, sort_options: List[FilmsApiSortOption], paginator: ApiPaginator
+    ) -> dict:
         self.__set_query_filters(query_filters)
         self.__refresh_edsl_query()
         self.__set_edsl_filters()
         self.__set_edsl_sort_options(sort_options)
-        self.__set_page()
-        self.__set_size()
+        self.__set_page(paginator.page_number)
+        self.__set_size(paginator.page_size)
         return self.__edsl_query
 
     def __set_query_filters(self, api_filters):
@@ -70,13 +73,11 @@ class FilmsAPI2EDSLQueryAdapter(API2EDSLQueryAdapter):
         self.__set_directors_edsl_filter()
         self.__set_writers_edsl_filter()
 
-    def __set_page(
-        self,
-    ) -> None:
-        self.__edsl_query["from"] = self.__query_filters.page
+    def __set_page(self, page_number: int) -> None:
+        self.__edsl_query["from"] = page_number
 
-    def __set_size(self) -> None:
-        self.__edsl_query["size"] = self.__query_filters.size
+    def __set_size(self, page_size: int) -> None:
+        self.__edsl_query["size"] = page_size
 
     def __append_to_edsl_sort(self, sort: EDSLSort) -> None:
         self.__edsl_query["sort"][sort.sort_field] = sort.order.value

@@ -1,6 +1,7 @@
 from typing import Optional
 
 from functools import lru_cache
+
 from fastapi import Depends
 
 from db.elastic import get_elastic
@@ -49,7 +50,7 @@ class FilmService(RequestSingleService):
 
 @lru_cache()
 def get_film_service(
-        cache: AsyncCacheStorage = Depends(get_redis),
-        search: AsyncSearchStorage = Depends(get_elastic),
+    cache: AsyncCacheStorage = Depends(get_redis),
+    search: AsyncSearchStorage = Depends(get_elastic),
 ) -> FilmService:
     return FilmService(cache, search)

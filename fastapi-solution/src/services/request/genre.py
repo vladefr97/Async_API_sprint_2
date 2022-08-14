@@ -44,7 +44,7 @@ class GenreService(RequestSingleService):
 
 @lru_cache()
 def get_genre_service(
-        cache: AsyncCacheStorage = Depends(get_redis),
-        search: AsyncSearchStorage = Depends(get_elastic),
+    cache: AsyncCacheStorage = Depends(get_redis),
+    search: AsyncSearchStorage = Depends(get_elastic),
 ) -> GenreService:
     return GenreService(cache, search)

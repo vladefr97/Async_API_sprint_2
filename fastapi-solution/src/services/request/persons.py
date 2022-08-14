@@ -23,7 +23,7 @@ class PersonsRequestService(RequestManyService):
 
 @lru_cache()
 def get_persons_service(
-        cache: AsyncCacheStorage = Depends(get_redis),
-        search: AsyncSearchStorage = Depends(get_elastic),
+    cache: AsyncCacheStorage = Depends(get_redis),
+    search: AsyncSearchStorage = Depends(get_elastic),
 ) -> PersonsRequestService:
     return PersonsRequestService(cache, search)

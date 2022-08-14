@@ -2,4 +2,5 @@ from api.filters import ApiQueryFilters
 
 
 class GenresAPIQueryFilters(ApiQueryFilters):
-    pass
+    page: int
+    size: int

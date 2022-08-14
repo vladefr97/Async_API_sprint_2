@@ -4,6 +4,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+from api.pagination import ApiPaginator, get_paginator
 from api.v1.filters import PersonsAPIQueryFilters
 from api.v1.messages.eng import PERSON_NOT_FOUND_MSG
 from api.v1.schema import PersonSchema
@@ -36,9 +37,10 @@ def to_person_api_schema(film_person: FilmPerson) -> PersonSchema:
 async def persons_list(
     persons_service: PersonsRequestService = Depends(get_persons_service),
     filters: PersonsAPIQueryFilters = Depends(get_query_filters),
+    paginator: ApiPaginator = Depends(get_paginator),
     adapter: PersonsAPI2EDSLQueryAdapter = Depends(get_api_to_edsl_adapter),
 ) -> List[PersonSchema]:
-    dsl = adapter.get_edsl_from_api(query_filters=filters)
+    dsl = adapter.get_edsl_from_api(query_filters=filters, paginator=paginator)
     persons = await persons_service.get_persons(edsl_query=dsl)
     if not persons:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=PERSON_NOT_FOUND_MSG)

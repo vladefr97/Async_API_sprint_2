@@ -4,6 +4,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+from api.pagination import ApiPaginator, get_paginator
 from api.v1.filters import GenresAPIQueryFilters
 from api.v1.messages.eng import GENRE_NOT_FOUND_MSG, GENRES_NOT_FOUND_MSG
 from api.v1.schema import GenreSchema
@@ -33,10 +34,10 @@ def to_genre_api_schema(genre: Genre) -> GenreSchema:
 )
 async def genres_list(
     genres_service: GenresRequestService = Depends(get_genres_service),
-    filters: GenresAPIQueryFilters = Depends(get_query_filters),
+    paginator: ApiPaginator = Depends(get_paginator),
     adapter: GenresAPI2EDSLQueryAdapter = Depends(get_api_to_edsl_adapter),
 ) -> List[GenreSchema]:
-    dsl = adapter.get_edsl_from_api(filters)
+    dsl = adapter.get_edsl_from_api(paginator=paginator)
     genres = await genres_service.get_genres(edsl_query=dsl)
     if not genres:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=GENRES_NOT_FOUND_MSG)
