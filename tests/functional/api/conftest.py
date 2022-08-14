@@ -8,11 +8,11 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
 
-
-from factories.films import FakeFilm, FilmFactory, get_fake_elastic_films, get_pretty_fake_films
-from factories.genres import FakeGenre, GenreFactory, make_pretty_fake_genres
-from api.settings import ES_HOST, MOVIES_INDEX_NAME
-from api.utils import load_fake_films, load_fake_genres, check_es_indexes_exists
+from functional.factories.films import FakeFilm, FilmFactory, get_fake_elastic_films, get_pretty_fake_films
+from functional.factories.genres import FakeGenre, GenreFactory, make_pretty_fake_genres
+from functional.api.settings import ES_HOST, MOVIES_INDEX_NAME, PERSON_INDEX_NAME
+from functional.api.utils import load_fake_films, load_fake_genres, check_es_indexes_exists, load_fake_persons
+from functional.factories.persons import PersonFactory, make_pretty_fake_persons, FakePerson
 
 
 @dataclass
@@ -79,6 +79,16 @@ async def fake_genres(es_client) -> List[FakeGenre]:
 
 
 @pytest.fixture(scope="session")
+async def fake_persons(es_client) -> List[FakePerson]:
+    persons = PersonFactory.batch(10)
+    pretty_persons = make_pretty_fake_persons(persons)
+    response = await load_fake_persons(es_client, pretty_persons)
+    if response["errors"]:
+        raise ConnectionError(f"Errors occurred during uploading fake persoons to ES index '{PERSON_INDEX_NAME}'")
+    return pretty_persons
+
+
+@pytest.fixture(scope="session")
 async def fake_film(fake_films: List[FakeFilm]) -> FakeFilm:
     return fake_films[0]
 
@@ -86,3 +96,8 @@ async def fake_film(fake_films: List[FakeFilm]) -> FakeFilm:
 @pytest.fixture(scope="session")
 async def fake_genre(fake_genres: List[FakeGenre]) -> FakeGenre:
     return fake_genres[0]
+
+
+@pytest.fixture(scope="session")
+async def fake_person(fake_persons: List[FakePerson]) -> FakePerson:
+    return fake_persons[0]

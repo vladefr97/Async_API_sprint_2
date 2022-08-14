@@ -4,9 +4,9 @@ from http import HTTPStatus
 
 import pytest
 
-from factories.genres import FakeGenre
-from api.settings import GENRES_V1_URL
-from api.types import AsyncGET
+from functional.factories.genres import FakeGenre
+from functional.api.settings import GENRES_V1_URL
+from functional.api.types import AsyncGET
 
 
 class TestGenre:

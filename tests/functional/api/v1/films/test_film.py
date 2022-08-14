@@ -2,9 +2,9 @@ from http import HTTPStatus
 
 import pytest
 
-from factories.films import FakeFilm
-from api.settings import FILMS_V1_URL
-from api.types import AsyncGET
+from functional.factories.films import FakeFilm
+from functional.api.settings import FILMS_V1_URL
+from functional.api.types import AsyncGET
 
 
 class TestFilm:

@@ -5,6 +5,7 @@ REDIS_HOST = ""
 # es indexes
 MOVIES_INDEX_NAME = "movies"
 GENRES_INDEX_NAME = "genre"
+PERSON_INDEX_NAME = "person"
 FILMS_POSTFIX = "films/"
 GENRES_POSTFIX = "genres/"
 PERSONS_POSTFIX = "persons/"
