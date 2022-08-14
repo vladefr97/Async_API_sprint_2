@@ -11,11 +11,14 @@ from services.dependence.cache import AsyncCacheStorage
 from services.dependence.search import AsyncSearchStorage
 from services.request_service import RequestSingleService
 
-PERSON_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
-
 
 class PersonService(RequestSingleService):
     index_name = "person"
+
+    def __init__(self, cache: AsyncCacheStorage, search: AsyncSearchStorage, expire: Optional[int], ):
+        super().__init__(cache, search)
+        if expire:
+            self.expire = expire
 
     async def get_by_id(self, person_id: str) -> Optional[FilmPerson]:
         person = await self._person_from_cache(person_id)
@@ -36,7 +39,7 @@ class PersonService(RequestSingleService):
 
     async def _put_person_to_cache(self, person: FilmPerson) -> None:
         key = "person" + ":" + str(person.id)
-        await self._put_to_cache(key, person.json(), PERSON_CACHE_EXPIRE_IN_SECONDS)
+        await self._put_to_cache(key, person.json(), self.expire)
 
 
 @lru_cache()

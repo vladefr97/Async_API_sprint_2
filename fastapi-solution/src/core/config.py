@@ -8,6 +8,10 @@ from core.logger import LOGGING
 logging_config.dictConfig(LOGGING)
 
 
+class CacheSettings(BaseSettings):
+    expire_in_seconds = Field(default=60 * 5, env="CACHE_EXPIRE_IN_SECONDS")  # 5 минут
+
+
 class ElasticSearchSettings(BaseSettings):
     host: str = Field(default="localhost", env="ELASTIC_HOST")
     port: str = Field(default="9200", env="ELASTIC_PORT")
