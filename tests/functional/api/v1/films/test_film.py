@@ -10,10 +10,16 @@ from functional.factories.films import FakeFilm
 class TestFilm:
 
     async def test_search_detailed(self, make_get_request: AsyncGET, fake_film: FakeFilm):
-        response = await make_get_request(FILMS_V1_URL + str(fake_film.id))
+        request_url = FILMS_V1_URL + str(fake_film.id)
+
+        response = await make_get_request(request_url)
+
         assert response.status == HTTPStatus.OK
         assert response.body["id"] == str(fake_film.id)
 
     async def test_search_detailed_with_bad_id(self, make_get_request: AsyncGET, fake_film: FakeFilm):
-        response = await make_get_request(FILMS_V1_URL + str(fake_film.id) + "bad")
+        request_url = FILMS_V1_URL + str(fake_film.id) + "bad"
+
+        response = await make_get_request(request_url)
+
         assert response.status == HTTPStatus.NOT_FOUND
