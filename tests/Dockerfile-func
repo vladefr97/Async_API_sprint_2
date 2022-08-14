@@ -1,0 +1,16 @@
+FROM python:3.9.5-slim
+
+# set work directory
+WORKDIR /functional
+
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE 1
+
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED 1
+
+COPY functional/requirements.txt .
+
+RUN pip3 install -r requirements.txt --no-cache-dir
+
+COPY functional .

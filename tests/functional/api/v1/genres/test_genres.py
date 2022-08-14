@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
-from tests.functional.api.settings import GENRES_V1_URL
-from tests.functional.api.types import AsyncGET
+from api.settings import GENRES_V1_URL
+from api.types import AsyncGET
 
 
 class TestGenres:

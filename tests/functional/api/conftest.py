@@ -8,10 +8,11 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
 
-from tests.factories.films import FakeFilm, FilmFactory, get_fake_elastic_films, get_pretty_fake_films
-from tests.factories.genres import FakeGenre, GenreFactory, make_pretty_fake_genres
-from tests.functional.api.settings import ES_HOST, MOVIES_INDEX_NAME
-from tests.functional.api.utils import load_fake_films, load_fake_genres
+
+from factories.films import FakeFilm, FilmFactory, get_fake_elastic_films, get_pretty_fake_films
+from factories.genres import FakeGenre, GenreFactory, make_pretty_fake_genres
+from api.settings import ES_HOST, MOVIES_INDEX_NAME
+from api.utils import load_fake_films, load_fake_genres, check_es_indexes_exists
 
 
 @dataclass
@@ -29,7 +30,7 @@ def event_loop():
 @pytest.fixture(scope="session")
 async def es_client():
     client = AsyncElasticsearch(hosts=ES_HOST)
-    # check_es_indexes_exists(client)
+    check_es_indexes_exists(client)
     yield client
     await client.close()
 

@@ -3,9 +3,10 @@ from typing import List
 from elasticsearch import AsyncElasticsearch
 
 from models.entities.movie import Movie
-from tests.factories.films import ElasticFakeFilm
-from tests.factories.genres import ElasticFakeGenre
-from tests.functional.api.settings import GENRES_INDEX_NAME, MOVIES_INDEX_NAME
+from factories.films import ElasticFakeFilm
+from factories.genres import ElasticFakeGenre
+from api.settings import GENRES_INDEX_NAME, MOVIES_INDEX_NAME
+
 
 
 def check_es_indexes_exists(client: AsyncElasticsearch):
